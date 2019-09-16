@@ -1,0 +1,179 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Год цитаты</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            color: #252323;
+            background-color: #f5f4f2;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        article > div > header > span {
+            display: none;
+        }
+
+        .year-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0 40px 0;
+        }
+
+        .year-buttons button {
+            border: none;
+            background: #edece8;
+            border-radius: 5px;
+            padding: 10px 30px;
+            margin: 0 10px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .year-buttons button:hover {
+            background: #e0dfda;
+        }
+
+        .year-buttons .right {
+            background: #a4bd00;
+        }
+
+        .year-buttons .wrong {
+            background: #bd0000;
+        }
+
+    </style>
+</head>
+<body>
+    <main>
+
+    </main>
+    <div class="temp-container"></div>
+    <script>
+    (function() {
+        let quoteInfo = {};
+
+        function generateRandomYears(trueYear) {
+            const current = (new Date()).getFullYear();
+            let years = [];
+            for(let i = 2004; i <= current; i++) {
+                if(i != trueYear)
+                    years.push(i);
+            }
+
+            const result = [trueYear];
+            for(let i=0; i<3; i++) {
+                let n = Math.random() * years.length | 0;
+                result.push(years[n]);
+                years.splice(n, 1);
+            }
+            result.sort((a, b) => a - b);
+            return result;
+        }
+
+        function generateEvenYears(trueYear) {
+            const start = 2004;
+            const end = (new Date()).getFullYear();
+            const interval = (end - start) / 4 | 0;
+
+        }
+
+        function answer(event) {
+            const year = parseInt(this.dataset.year, 10);
+            if(year == quoteInfo.year) {
+                this.classList.add("right");
+            } else {
+                this.classList.add("wrong");
+                document.querySelector(`.year-buttons button[data-year='${quoteInfo.year}']`).classList.add('right');
+            }
+        }
+
+        function createButtons(quote, years) {
+            const container = document.createElement('div');
+            container.classList.add("year-buttons");
+            for(let year of years) {
+                const button = document.createElement("button");
+                button.textContent = year;
+                button.dataset['year'] = year;
+                button.addEventListener("click", answer);
+                container.appendChild(button);
+            }
+            quote.querySelector("div").insertBefore(container, quote.querySelector("footer"));
+        }
+
+        function processQuote(quote) {
+            quote.classList.add("processed");
+            const span = quote.querySelector("div > header > span");
+            const a = quote.querySelector("div > header > a");
+            if(!span || !a) {
+                return;
+            }
+
+            console.log(span.textContent.split('.'));
+            quoteInfo.year = parseInt(span.textContent.split('.').pop());
+            quoteInfo.id = parseInt(a.textContent.substr(1));
+
+            const years = generateRandomYears(quoteInfo.year);
+
+            span.parentNode.removeChild(span);
+
+            console.log(quoteInfo);
+
+            quote.parentNode.removeChild(quote);
+            document.querySelector("main").appendChild(quote);
+
+            createButtons(quote, years);
+        }
+
+        function setupObserver() {
+            const observer = new MutationObserver(records => {
+                for(let i=0; i<records.length; i++) {
+                    if(records[i].type == 'childList') {
+                        for(let j=0; j<records[i].addedNodes.length; j++) {
+                            if(records[i].addedNodes[j].nodeName == 'ARTICLE' && !records[i].addedNodes[j].classList.contains("processed")) {
+                                processQuote(records[i].addedNodes[j]);
+                            }
+                        }
+                    }
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: false
+            });
+        }
+
+        function nextQuote() {
+            const temp = document.querySelector(".temp-container");
+
+            while(temp.childElementCount > 0) {
+                temp.removeChild(temp.firstChild);
+            }
+
+            const articles = document.querySelectorAll("article");
+            while(articles.length > 0) {
+                articles[i].parentNode.removeChild(articles[i]);
+            }
+
+            const script = document.createElement("script");
+            script.src = "https://bash.im/forweb/?u";
+            script.onload = () => {
+                console.log("Loaded");
+                console.log(document.querySelector("article"));
+            }
+            temp.appendChild(script);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            setupObserver();
+            nextQuote();
+        });
+    })();
+    </script>
+</body>
+</html>
