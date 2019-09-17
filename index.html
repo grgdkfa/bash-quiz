@@ -105,8 +105,12 @@
         function generateEvenYears(trueYear) {
             const start = 2004;
             const end = (new Date()).getFullYear();
-            const interval = (end - start) / 4 | 0;
-
+            const interval = (end - 1 - start) / 3.5;
+            const result = [];
+            for(let i = 0, s = (trueYear - start) / interval | 0; i < 4; i++) {
+                result.push(trueYear + interval * (i - s) | 0);
+            }
+            return result;
         }
 
         function answer(event) {
