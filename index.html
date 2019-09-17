@@ -33,7 +33,7 @@
             transition: background-color 0.3s;
         }
 
-        .year-buttons button:hover {
+        article:not(.answered) .year-buttons button:hover {
             background: #e0dfda;
         }
 
@@ -43,6 +43,26 @@
 
         .year-buttons .wrong {
             background: #bd0000;
+        }
+
+        .next-button {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto 40px auto;
+            padding: 15px;
+            font-size: 24px;
+            color: white;
+            background: #859900;
+            border-radius: 5px;
+        }
+
+        .answered .next-button {
+            display: block;
+        }
+
+        .answered .year-buttons {
+            margin-bottom: 20px;
         }
 
     </style>
@@ -55,6 +75,14 @@
     <script>
     (function() {
         let quoteInfo = {};
+        let userId = (() => {
+            const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+            let id = "";
+            for(let i=0; i<32; i++) {
+                id += alphabet.charAt(Math.random() * alphabet.length | 0);
+            }
+            return id;
+        })();
 
         function generateRandomYears(trueYear) {
             const current = (new Date()).getFullYear();
@@ -82,7 +110,12 @@
         }
 
         function answer(event) {
+            if(quoteInfo.answer) {
+                return;
+            }
+            document.querySelector('article').classList.add('answered');
             const year = parseInt(this.dataset.year, 10);
+            quoteInfo.answer = year;
             if(year == quoteInfo.year) {
                 this.classList.add("right");
             } else {
@@ -101,7 +134,14 @@
                 button.addEventListener("click", answer);
                 container.appendChild(button);
             }
-            quote.querySelector("div").insertBefore(container, quote.querySelector("footer"));
+            const footer = quote.querySelector("footer");
+            quote.querySelector("div").insertBefore(container, footer);
+
+            const nextButton = document.createElement('button');
+            nextButton.textContent = "Следующая цитата";
+            nextButton.classList.add('next-button');
+            nextButton.addEventListener("click", nextQuote);
+            quote.querySelector("div").insertBefore(nextButton, footer);
         }
 
         function processQuote(quote) {
@@ -113,8 +153,10 @@
             }
 
             console.log(span.textContent.split('.'));
-            quoteInfo.year = parseInt(span.textContent.split('.').pop());
-            quoteInfo.id = parseInt(a.textContent.substr(1));
+            quoteInfo = {
+                year: parseInt(span.textContent.split('.').pop()),
+                id: parseInt(a.textContent.substr(1))
+            }
 
             const years = generateRandomYears(quoteInfo.year);
 
@@ -156,7 +198,7 @@
             }
 
             const articles = document.querySelectorAll("article");
-            while(articles.length > 0) {
+            for(let i=0; i<articles.length; i++) {
                 articles[i].parentNode.removeChild(articles[i]);
             }
 
@@ -169,7 +211,16 @@
             temp.appendChild(script);
         }
 
+        function loadId() {
+            if(localStorage['user']) {
+                userId = localStorage['user'];
+            } else {
+                localStorage['user'] = userId;
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
+            loadId();
             setupObserver();
             nextQuote();
         });
