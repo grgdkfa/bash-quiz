@@ -84,18 +84,16 @@
         header {
             max-width: 560px;
             margin: 0 auto;
+            padding: 10px 0;
             display: flex;
             justify-content: flex-end;
         }
 
-        .score {
-            margin: 10px 0;
-        }
     </style>
 </head>
 <body>
     <header>
-        Верно: <div class="score">0 / 0</div>
+        <div>Верно: <span class="score">0 / 0</span></div>
     </header>
     <div class="spinner">
             <svg width="200px"  height="200px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;"><circle cx="50" cy="50" fill="none" ng-attr-stroke="{{config.color}}" ng-attr-stroke-width="{{config.width}}" ng-attr-r="{{config.radius}}" ng-attr-stroke-dasharray="{{config.dasharray}}" stroke="#e0dfda" stroke-width="10" r="35" stroke-dasharray="164.93361431346415 56.97787143782138" transform="rotate(323.901 50 50)"><animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform></circle></svg>
