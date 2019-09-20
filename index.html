@@ -94,6 +94,12 @@
             margin: 0;
         }
 
+        .apology {
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+        }
+
         @media screen and (max-width: 650px) {
             header {
                 padding: 10px 15px;
@@ -127,6 +133,16 @@
     <main>
 
     </main>
+    <footer>
+        <div class="apology same-quote hidden">
+            <p>Если повторяется одна и та же цитата - вы отвечаете слишком быстро :)</p>
+            <p>Такое случается из-за ограничений API bash.im</p>
+        </div>
+        <div class="apology adblock hidden">
+            <p>Цитата долго не загружается. Возможно, её убил адблок :(</p>
+            <p>На этой странице нет никакой рекламы, поэтому его можно смело отключить.</p>
+        </div>
+    </footer>
     <div class="temp-container"></div>
     <script>
     (function() {
@@ -213,9 +229,15 @@
             lastLoaded = Date.now();
             document.body.classList.remove('loading');
 
+            const newId = parseInt(a.textContent.substr(1));
+
+            if(newId == quoteInfo.id) {
+                document.querySelector('.apology.same-quote').classList.remove('hidden');
+            }
+
             quoteInfo = {
                 year: parseInt(span.textContent.split('.').pop()),
-                id: parseInt(a.textContent.substr(1))
+                id: newId
             }
 
             const years = generateRandomYears(quoteInfo.year);
@@ -311,6 +333,12 @@
             loadUser();
             setupObserver();
             nextQuote();
+
+            setTimeout(function () {
+                if(lastLoaded == 0) {
+                    document.querySelector('.apology.adblock').classList.remove('hidden');
+                }
+            }, 10000);
         });
     })();
     </script>
